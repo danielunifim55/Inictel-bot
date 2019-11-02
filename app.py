@@ -2,20 +2,20 @@ import apiai
 import json
 import requests
 from sendmsg import *
-# from dbconn import *
+from dbconn import *
 from flask import Flask, request, render_template
 
 app = Flask(__name__)
-# dbcnn = Dbconn()
+dbcnn = Dbconn()
 
 # Facebook Messenger Configuration
 recipient_id = None
 VTK = 'inictelchatbot'
-PAT = 'EAAF0ImcKDG4BAOsjYCYNYTXZC0gGniHOpCwpgUe6zXteNfV9V9Qc3wJY5m6fjVWneJxVyNTkPnRsGgNTF96NjEo8W5PZBpiU58KnCohCfZAD' \
-      'KBbwzUUVLqQJ6B3Q5WrINo7gatHlKe11AVYzoRKnXZASxM1fEhTZClIBkJkRrbQZDZD'
+PAT = 'EAAF0ImcKDG4BAKdHLfvAcLwxpF27xWRIHCiZBnkcq2PhadZCDh0dhRRYMz48hfNcQ6GfzbZCfd6jYw4nrZAZAvPtYQbQ0eiN1bGgK7cZBhW' \
+      'zxa18cuiE5hnZAqreVmA7j73rhfYj5ZCYqpJgpoZCMa5TD3ASCPri8LUCCklj7zokmHQZDZD'
 
 # Dialogflow Configuration
-CAT = '1d3341bc0e014de2a3805b5e747731a9'
+CAT = 'ed8b909566b94cdbb7901ca7ea8a5e18'
 
 # images
 IMG_URL = 'https://i.giphy.com/xT0GqrJNbZkRcr2Jgc.gif'
@@ -30,12 +30,14 @@ def nlp_fallback(input_text, session_id):
     response = req.getresponse()
     raw = json.loads(response.read())
     if raw['status']['code'] == 200:
-        # booking = raw['result']['parameters']
-        # if booking['BicyleType'] is not None and booking['date'] is not None and booking['time'] is not None:
-        #     customer_id = session_id
-        #     dbres = dbcnn.add_booking([customer_id, booking])
-        #     if not dbres:
-        #         raise Exception('Mlab Exception:' + 'Error de escritura en base de datos')
+        # if raw['result']['metadata']['intentName'] == "EnrollStudent":
+        #     enrollment = raw['result']['parameters']
+        #     if enrollment['TrainingTopics'] is not None and enrollment['TrainingType'] is not None and \
+        #             enrollment['TrainingModality'] is not None and enrollment['date'] is not None:
+        #         customer_id = session_id
+        #         dbres = dbcnn.add_enrollment([customer_id, enrollment])
+        #         if not dbres:
+        #             raise Exception('MongoDB.Atlas Exception:' + 'Error de escritura en base de datos')
         response_text = raw['result']['fulfillment']['messages'][0]['speech']
     else:
         raise Exception('Dialogflow Exception:' + raw['status']['errorType'])
@@ -103,10 +105,11 @@ def webhook():
 
 
 if __name__ == '__main__':
-    # parameters = {
-    #     "BicyleType": "Mountain1",
-    #     "date": "2019-10-21",
-    #     "time": "10:00:00"
-    # }
-    # dbres = dbcnn.add_booking([2, parameters])
+    parameters = {
+        "TrainingTopics": "Basics of Drone Technology",
+        "TrainingType": "Single course",
+        "TrainingModality": "online",
+        "date": "2020-06-01"
+    }
+    # dbres = dbcnn.add_enrollment([2, parameters])
     app.run(debug=True, port=5500)
